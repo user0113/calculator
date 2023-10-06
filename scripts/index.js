@@ -4,7 +4,7 @@ const equals = document.querySelector('.equal');
 const clear = document.querySelector('.clear');
 const result = document.getElementById("result");
 let prev = "";
-let cur = 0;
+let cur = "";
 let operator = "";
 
 //Addition
@@ -15,6 +15,16 @@ const add = function(a, b) {
 //Subtraction
 const subtract = function(a, b) {
     return parseFloat(b) - parseFloat(a);
+};
+
+//Multiplication
+const multiply = function(a, b) {
+    return parseFloat(b) * parseFloat(a);
+};
+
+//Division
+const divide = function(a, b) {
+    return parseFloat(b) / parseFloat(a);
 };
 
 //Button press logic
@@ -38,14 +48,14 @@ buttons.forEach(button => {
 operators.forEach(opButton => {
     opButton.addEventListener("click", function() {
         //Performs operation if two values and operator have been supplied
-        if (operator != "" && prev != "") {
+        if (cur != "" && prev != "" && operator != "") {
             operate(cur, operator, prev);
             prev = result.value;
 
         } else {
-            prev = cur;
+            prev = result.value;
         }
-        cur = 0;
+        cur = "";
         console.log("cur is: " + cur + " and prev is: " + prev);
         //Determines operator based on text content of button pressed
         operator = this.textContent;
@@ -55,18 +65,18 @@ operators.forEach(opButton => {
 
 //Clear all
 clear.addEventListener("click", function() {
-    cur = 0;
+    cur = "";
     prev = "";
     operator = "";
-    result.value = cur;
+    result.value = 0;
 })
 
 //Equal button
 equals.addEventListener("click", function() {
-    if (operator != "" && prev != "") {
-        operate(cur, operator, prev);
-        cur = 0;
+    if (operator != "" && prev != "" && cur != "") {
         console.log("cur is: " + cur + " and prev is: " + prev);
+        operate(cur, operator, prev);
+        cur = "";
         prev = result.value;
         console.log("now cur is: " + cur + " and prev is: " + prev);
     }
@@ -79,6 +89,21 @@ const operate = function(num1, operator, num2){
         result.value = add(cur, prev);
     } else if (operator == "-") {
         result.value = subtract(cur, prev);
+    } else if (operator == "*") {
+        result.value = multiply(cur, prev);
+    } else if (operator == "/") {
+        result.value = divide(cur, prev);
     }
     operator = "";
+    console.log("value is: " + result.value)
+    //Checks if display value has overflowed display container, changes to expontential 
+    if (isOverflow(result.value)) {
+        result.value = (parseFloat(result.value)).toExponential(6);
+    }  
+}
+
+//Overflow checker
+const isOverflow = function (number) {
+    const numLength = number.length;
+    return (numLength > 11);
 }
