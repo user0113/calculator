@@ -2,6 +2,7 @@ const buttons = document.querySelectorAll('.number');
 const operators = document.querySelectorAll('.operator');
 const equals = document.querySelector('.equal');
 const clear = document.querySelector('.clear');
+const decimal = document.querySelector('.decimal');
 const result = document.getElementById("result");
 let prev = "";
 let cur = "";
@@ -40,6 +41,9 @@ buttons.forEach(button => {
             cur += num;
             result.value = cur;
         }
+        if (isOverflow(result.value)) {
+            result.value = (parseFloat(result.value)).toExponential(6);
+        } 
         console.log("cur: " + cur);
     })
 })
@@ -82,6 +86,14 @@ equals.addEventListener("click", function() {
     }
 })
 
+decimal.addEventListener("click", function() {
+    console.log((hasDeci(result.value)));
+    if (!(hasDeci(result.value))) {
+        cur += ".";
+        result.value = cur;
+    };
+})
+
 //Evaluate operation
 const operate = function(num1, operator, num2){
     console.log("operating: " + num1 + " " + operator + " " + num2);
@@ -106,4 +118,12 @@ const operate = function(num1, operator, num2){
 const isOverflow = function (number) {
     const numLength = number.length;
     return (numLength > 11);
+}
+
+//Decimal checker
+const hasDeci = function (number) {
+    const deci = /^[-+]?[0-9]+\.[0-9]*$/;   
+    const notDeci = /.*\..*\..*/;
+    console.log(notDeci.test(number));  
+    return (deci.test(number) && !(notDeci.test(number)));
 }
