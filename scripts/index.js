@@ -34,17 +34,17 @@ buttons.forEach(button => {
         //Updates display using text content of button that was pressed
         const num = this.textContent;
         //Prevents appending numbers to 0
-        if (cur == 0) {
+        if (cur == 0 && !cur.includes(".")) {
             cur = num;
             result.value = cur;
         } else {
             cur += num;
             result.value = cur;
         }
+        //Converts overflow to exponential notation
         if (isOverflow(result.value)) {
             result.value = (parseFloat(result.value)).toExponential(6);
         } 
-        console.log("cur: " + cur);
     })
 })
 
@@ -60,10 +60,8 @@ operators.forEach(opButton => {
             prev = result.value;
         }
         cur = "";
-        console.log("cur is: " + cur + " and prev is: " + prev);
         //Determines operator based on text content of button pressed
         operator = this.textContent;
-        console.log("operator: " + operator);
     })
 })
 
@@ -78,17 +76,19 @@ clear.addEventListener("click", function() {
 //Equal button
 equals.addEventListener("click", function() {
     if (operator != "" && prev != "" && cur != "") {
-        console.log("cur is: " + cur + " and prev is: " + prev);
         operate(cur, operator, prev);
         cur = "";
         prev = result.value;
-        console.log("now cur is: " + cur + " and prev is: " + prev);
     }
 })
 
+//Decimal button
 decimal.addEventListener("click", function() {
-    console.log((hasDeci(result.value)));
-    if (!(hasDeci(result.value))) {
+    //Checks if string already contains a decimal
+    if (!(String(result.value).includes("."))) {
+        if(cur == "") {
+            cur = 0;
+        }
         cur += ".";
         result.value = cur;
     };
@@ -96,7 +96,6 @@ decimal.addEventListener("click", function() {
 
 //Evaluate operation
 const operate = function(num1, operator, num2){
-    console.log("operating: " + num1 + " " + operator + " " + num2);
     if (operator == "+") {
         result.value = add(cur, prev);
     } else if (operator == "-") {
@@ -107,8 +106,7 @@ const operate = function(num1, operator, num2){
         result.value = divide(cur, prev);
     }
     operator = "";
-    console.log("value is: " + result.value)
-    //Checks if display value has overflowed display container, changes to expontential 
+    //Changes to expontential notation if display value has overflowed display container
     if (isOverflow(result.value)) {
         result.value = (parseFloat(result.value)).toExponential(6);
     }  
@@ -118,12 +116,4 @@ const operate = function(num1, operator, num2){
 const isOverflow = function (number) {
     const numLength = number.length;
     return (numLength > 11);
-}
-
-//Decimal checker
-const hasDeci = function (number) {
-    const deci = /^[-+]?[0-9]+\.[0-9]*$/;   
-    const notDeci = /.*\..*\..*/;
-    console.log(notDeci.test(number));  
-    return (deci.test(number) && !(notDeci.test(number)));
 }
